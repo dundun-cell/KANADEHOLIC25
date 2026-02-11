@@ -23,9 +23,9 @@
         align-items: center;
         background: linear-gradient(135deg, #1a0b2e 0%, #4a235a 50%, #8e44ad 100%);
         font-family: 'Quicksand', sans-serif;
-        overflow: hidden;
+        overflow: hidden; /* Mencegah scrollbar saat partikel jatuh */
         color: #333;
-        perspective: 1000px; /* Untuk efek 3D */
+        perspective: 1000px;
     }
 
     /* BACKGROUND PARTICLES */
@@ -84,9 +84,9 @@
     /* MAIN CARD CONTAINER */
     .card-container {
         position: relative;
-        z-index: 10;
+        z-index: 10; /* Kartu di lapisan 10 */
         transform-style: preserve-3d;
-        transition: transform 0.1s ease-out; /* Smooth mouse follow */
+        transition: transform 0.1s ease-out;
     }
 
     .card {
@@ -180,7 +180,7 @@
         line-height: 1.8;
         color: #444;
         margin-bottom: 30px;
-        min-height: 120px; /* Prevent layout shift */
+        min-height: 120px;
     }
 
     .highlight {
@@ -215,6 +215,8 @@
         align-items: center;
         gap: 8px;
         font-size: 0.95rem;
+        position: relative;
+        z-index: 20; /* Tombol di atas partikel */
     }
 
     .btn-primary {
@@ -239,7 +241,7 @@
         color: white;
     }
 
-    /* VISUALIZER (FAKE) */
+    /* VISUALIZER */
     .visualizer {
         display: flex;
         gap: 4px;
@@ -273,8 +275,8 @@
     /* ANIMATED ELEMENTS (CONFETTI & HEARTS) */
     .particle {
         position: absolute;
-        pointer-events: none;
-        z-index: 5;
+        pointer-events: none; /* Agar klik tembus ke tombol */
+        z-index: 50; /* DI ATAS KARTU (card z-index 10) */
     }
 
     .confetti {
@@ -286,16 +288,20 @@
 
     .music-note {
         font-size: 24px;
-        color: rgba(255, 255, 255, 0.7);
+        color: rgba(255, 255, 255, 0.8);
         animation: floatUp linear forwards;
+        text-shadow: 0 0 5px rgba(255, 154, 243, 0.6);
     }
 
     @keyframes fall {
-        to { transform: translateY(110vh) rotate(720deg); }
+        0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+        100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
     }
 
     @keyframes floatUp {
-        to { transform: translateY(-100px) rotate(20deg); opacity: 0; }
+        0% { transform: translateY(100vh) scale(0.8) rotate(0deg); opacity: 0; }
+        20% { opacity: 1; }
+        100% { transform: translateY(-20vh) scale(1.2) rotate(20deg); opacity: 0; }
     }
 
     /* TOAST NOTIFICATION */
@@ -356,9 +362,8 @@
             <div class="corner-decoration bottom-right"></div>
 
             <div class="img-wrapper">
-                <!-- Fallback to Picsum if local image missing -->
-                <img src="kanade.jpg" 
-                     onerror="this.src='https://picsum.photos/seed/kanade/300/300'" 
+                <!-- Gambar placeholder (bisa diganti 'kanade.jpg') -->
+                <img src="https://picsum.photos/seed/kanade/300/300" 
                      alt="Kanade" 
                      class="kanade-img">
             </div>
@@ -412,7 +417,8 @@
 
     // --- VARIABLES ---
     let isPlaying = false;
-    let audioContext = null; // Placeholder for real audio logic if expanded later
+    let autoConfettiInterval;
+    let autoHeartInterval;
 
     // --- INTRO FUNCTION ---
     function startExperience() {
@@ -424,26 +430,16 @@
         // Show card after overlay fades
         setTimeout(() => {
             card.classList.add('active');
-            typeWriterEffect(); // Start typing text
-            createBackgroundNotes(); // Start ambient background
+            typeWriterEffect(); 
+            createBackgroundNotes(); 
+            startAutoEffects(); // <--- MULAI EFEK OTOMATIS
         }, 500);
     }
 
     // --- TYPEWRITER EFFECT ---
     function typeWriterEffect() {
         const container = document.getElementById('typewriter');
-        container.innerHTML = ''; // Clear
-        let i = 0;
-        const speed = 20; // ms per char
-
-        // Temporary div to parse HTML tags
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = fullText.trim();
-        
-        // Simple text node traversal for typewriter is complex with HTML tags.
-        // For simplicity in this demo, we will fade in the whole HTML block 
-        // or just type plain text. Let's do a fade-in for HTML content 
-        // to preserve formatting safely.
+        container.innerHTML = ''; 
         
         container.innerHTML = fullText;
         container.style.opacity = 0;
@@ -457,6 +453,19 @@
         }, 50);
     }
 
+    // --- AUTO EFFECTS SYSTEM (Baru Ditambahkan) ---
+    function startAutoEffects() {
+        // Buat Confetti Jatuh tiap 300ms
+        autoConfettiInterval = setInterval(() => {
+            createConfetti();
+        }, 300);
+
+        // Buat Love Naik tiap 800ms
+        autoHeartInterval = setInterval(() => {
+            createHeart();
+        }, 800);
+    }
+
     // --- MUSIC TOGGLE (VISUAL ONLY) ---
     function toggleMusic(btn) {
         isPlaying = !isPlaying;
@@ -468,30 +477,30 @@
             btnText.textContent = "⏸ Jeda Musik";
             btn.style.background = "linear-gradient(135deg, #6c3483, #8e44ad)";
             showToast("🎵 Memutar: 'Sound of Silence' (Cover by Kanade)");
-            spawnNotes(); // Spawn instant notes
+            spawnNotes(); 
         } else {
             visualizer.classList.remove('playing');
             btnText.textContent = "🎵 Putar Musik";
-            btn.style.background = ""; // Reset to default CSS
+            btn.style.background = "";
         }
     }
 
-    // --- CELEBRATE BUTTON ---
+    // --- CELEBRATE BUTTON (EFEK BANYAK) ---
     function celebrate() {
         showToast("🎉 Selamat Ulang Tahun! Semoga bahagia selalu!");
         
-        // Explosion of confetti
-        for(let i=0; i<50; i++) {
+        // Explosion of confetti (Lebih banyak)
+        for(let i=0; i<80; i++) {
             setTimeout(() => {
                 createConfetti();
-            }, i * 30);
+            }, i * 20);
         }
         
         // Heart burst
-        for(let i=0; i<15; i++) {
+        for(let i=0; i<30; i++) {
             setTimeout(() => {
                 createHeart();
-            }, i * 50);
+            }, i * 30);
         }
     }
 
@@ -513,49 +522,51 @@
         const confetti = document.createElement('div');
         confetti.className = 'confetti particle';
         
-        // Random properties
         const colors = ['#ff9ff3', '#feca57', '#54a0ff', '#5f27cd', '#ffffff'];
         confetti.style.left = Math.random() * 100 + 'vw';
-        confetti.style.top = '-10px';
+        // Mulai dari sedikit di atas layar agar terlihat smooth
+        confetti.style.top = '-20px'; 
         confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-        confetti.style.animationDuration = (Math.random() * 2 + 3) + 's';
+        confetti.style.animationDuration = (Math.random() * 2 + 3) + 's'; // Durasi jatuh 3-5 detik
         
         document.body.appendChild(confetti);
         
+        // Hapus elemen setelah animasi selesai
         setTimeout(() => confetti.remove(), 5000);
     }
 
     function createHeart() {
         const heart = document.createElement('div');
         heart.className = 'particle music-note';
-        heart.innerHTML = '💜';
+        heart.innerHTML = '💜'; // Icon hati
         heart.style.left = Math.random() * 100 + 'vw';
-        heart.style.bottom = '-20px';
+        heart.style.bottom = '-50px'; // Mulai dari bawah layar
         heart.style.fontSize = (Math.random() * 20 + 15) + 'px';
-        heart.style.animationDuration = (Math.random() * 3 + 4) + 's';
+        heart.style.animationDuration = (Math.random() * 3 + 4) + 's'; // Durasi naik 4-7 detik
         
         document.body.appendChild(heart);
         setTimeout(() => heart.remove(), 7000);
     }
 
     function spawnNotes() {
-        // Spawn a few notes around the card
+        // Nota musik kecil di sekitar kartu saat musik diputar
         const cardRect = document.getElementById('mainCard').getBoundingClientRect();
-        for(let i=0; i<5; i++) {
+        for(let i=0; i<8; i++) {
             const note = document.createElement('div');
             note.className = 'particle music-note';
             note.innerHTML = Math.random() > 0.5 ? '🎵' : '🎶';
             note.style.left = (cardRect.left + Math.random() * cardRect.width) + 'px';
             note.style.top = (cardRect.top + Math.random() * cardRect.height) + 'px';
-            note.style.fontSize = '20px';
+            note.style.fontSize = '24px';
+            note.style.animation = 'none'; // Custom animation manual
+            
             document.body.appendChild(note);
             
-            // Animate manually for more control
             note.animate([
                 { transform: 'translateY(0) scale(1)', opacity: 1 },
-                { transform: `translateY(-100px) translateX(${Math.random()*40 - 20}px) scale(0)`, opacity: 0 }
+                { transform: `translateY(-150px) translateX(${Math.random()*60 - 30}px) scale(0)`, opacity: 0 }
             ], {
-                duration: 1500,
+                duration: 2000,
                 easing: 'ease-out'
             }).onfinish = () => note.remove();
         }
@@ -566,7 +577,7 @@
     const card = document.getElementById('mainCard');
 
     document.addEventListener('mousemove', (e) => {
-        if(window.innerWidth < 600) return; // Disable on mobile
+        if(window.innerWidth < 600) return; 
 
         const xAxis = (window.innerWidth / 2 - e.pageX) / 25;
         const yAxis = (window.innerHeight / 2 - e.pageY) / 25;
@@ -574,7 +585,6 @@
         container.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
     });
 
-    // Reset on mouse leave
     document.addEventListener('mouseleave', () => {
         container.style.transform = `rotateY(0deg) rotateX(0deg)`;
     });
