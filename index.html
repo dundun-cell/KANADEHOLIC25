@@ -4,639 +4,217 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Selamat Ulang Tahun, Kanade 🎂✨</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&family=Playfair+Display:ital,wght@1,600&display=swap" rel="stylesheet">
+
 <style>
-    :root {
-        --primary: #8e44ad;
-        --secondary: #d2b4de;
-        --accent: #ff9ff3;
-        --bg-dark: #2c1e3a;
-        --glass: rgba(255, 255, 255, 0.85);
-        --glass-border: rgba(255, 255, 255, 0.6);
-    }
+:root {
+    --primary: #8e44ad;
+    --accent: #ff9ff3;
+    --glass: rgba(255,255,255,0.88);
+}
 
-    body {
-        margin: 0;
-        min-height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background: linear-gradient(135deg, #1a0b2e 0%, #4a235a 50%, #8e44ad 100%);
-        font-family: 'Quicksand', sans-serif;
-        overflow: hidden;
-        color: #333;
-        perspective: 1000px; /* Untuk efek 3D */
-    }
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg,#1a0b2e,#4a235a,#8e44ad);
+    font-family: 'Quicksand', sans-serif;
+    overflow: hidden;
+}
 
-    /* BACKGROUND PARTICLES */
-    .bg-canvas {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 0;
-        pointer-events: none;
-    }
+/* INTRO */
+#intro-overlay {
+    position: fixed;
+    inset: 0;
+    background: #2c1e3a;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    cursor: pointer;
+    transition: opacity 1s ease;
+}
+#intro-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+.intro-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    animation: pulse 2s infinite;
+}
+@keyframes pulse {
+    0%,100% {opacity:.7}
+    50% {opacity:1}
+}
 
-    /* INTRO OVERLAY */
-    #intro-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: #2c1e3a;
-        z-index: 100;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        transition: opacity 1s ease, visibility 1s ease;
-        cursor: pointer;
-    }
+/* CARD */
+.card {
+    background: var(--glass);
+    padding: 35px;
+    border-radius: 24px;
+    max-width: 420px;
+    text-align: center;
+    box-shadow: 0 20px 50px rgba(0,0,0,.4);
+    opacity: 0;
+    transform: translateY(40px);
+    transition: 1s ease;
+    z-index: 10;
+}
+.card.active {
+    opacity: 1;
+    transform: translateY(0);
+}
 
-    #intro-overlay.hidden {
-        opacity: 0;
-        visibility: hidden;
-        pointer-events: none;
-    }
+.img-wrapper {
+    width: 200px;
+    height: 200px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    padding: 8px;
+    background: linear-gradient(45deg,#ff9ff3,#d2b4de);
+    animation: hue 8s linear infinite;
+}
+@keyframes hue {
+    to {filter:hue-rotate(360deg)}
+}
+.img-wrapper img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid white;
+}
 
-    .intro-text {
-        color: white;
-        font-family: 'Playfair Display', serif;
-        font-size: 2rem;
-        animation: pulseText 2s infinite;
-    }
+h1 {
+    font-family: 'Playfair Display', serif;
+    color: var(--primary);
+}
 
-    .intro-sub {
-        color: var(--accent);
-        margin-top: 10px;
-        font-size: 1rem;
-        letter-spacing: 2px;
-    }
+.date {
+    font-weight: 700;
+    margin-bottom: 15px;
+    color: var(--primary);
+}
 
-    @keyframes pulseText {
-        0%, 100% { transform: scale(1); opacity: 0.8; }
-        50% { transform: scale(1.05); opacity: 1; }
-    }
+.message {
+    line-height: 1.8;
+    margin-bottom: 25px;
+}
 
-    /* MAIN CARD CONTAINER */
-    .card-container {
-        position: relative;
-        z-index: 10;
-        transform-style: preserve-3d;
-        transition: transform 0.1s ease-out; /* Smooth mouse follow */
-    }
+button {
+    border: none;
+    padding: 12px 24px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: 700;
+}
+.btn-main {
+    background: linear-gradient(135deg,#8e44ad,#9b59b6);
+    color: white;
+}
 
-    .card {
-        background: var(--glass);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border: 1px solid var(--glass-border);
-        padding: 40px;
-        border-radius: 24px;
-        text-align: center;
-        max-width: 480px;
-        box-shadow: 0 20px 50px rgba(0,0,0,0.3), inset 0 0 20px rgba(255,255,255,0.5);
-        opacity: 0;
-        transform: translateY(50px) rotateX(10deg);
-        transition: opacity 1s ease, transform 1s ease, box-shadow 0.3s ease;
-        overflow: hidden;
-        position: relative;
-    }
-
-    .card.active {
-        opacity: 1;
-        transform: translateY(0) rotateX(0);
-    }
-
-    .card:hover {
-        box-shadow: 0 25px 60px rgba(142, 68, 173, 0.4), inset 0 0 20px rgba(255,255,255,0.8);
-    }
-
-    /* DECORATIVE CORNERS */
-    .corner-decoration {
-        position: absolute;
-        width: 40px;
-        height: 40px;
-        border: 3px solid var(--primary);
-        border-radius: 50%;
-        opacity: 0.3;
-    }
-    .top-left { top: 15px; left: 15px; border-right: none; border-bottom: none; }
-    .bottom-right { bottom: 15px; right: 15px; border-left: none; border-top: none; }
-
-    /* IMAGE WRAPPER */
-    .img-wrapper {
-        position: relative;
-        width: 220px;
-        height: 220px;
-        margin: 0 auto 25px;
-        border-radius: 50%;
-        padding: 8px;
-        background: linear-gradient(45deg, #ff9ff3, #d2b4de);
-        box-shadow: 0 0 30px rgba(142, 68, 173, 0.5);
-        animation: spinBorder 10s linear infinite;
-    }
-
-    .kanade-img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        border-radius: 50%;
-        border: 4px solid white;
-        background: #fff;
-    }
-
-    @keyframes spinBorder {
-        0% { filter: hue-rotate(0deg); }
-        100% { filter: hue-rotate(360deg); }
-    }
-
-    /* TYPOGRAPHY */
-    h1 {
-        font-family: 'Playfair Display', serif;
-        color: var(--primary);
-        font-size: 1.8rem;
-        margin: 0 0 10px 0;
-        line-height: 1.2;
-    }
-
-    .date-badge {
-        display: inline-block;
-        background: rgba(142, 68, 173, 0.1);
-        color: var(--primary);
-        padding: 5px 15px;
-        border-radius: 20px;
-        font-weight: 700;
-        font-size: 0.9rem;
-        margin-bottom: 20px;
-        border: 1px solid rgba(142, 68, 173, 0.2);
-    }
-
-    .message-content {
-        font-size: 1.05rem;
-        line-height: 1.8;
-        color: #444;
-        margin-bottom: 30px;
-        min-height: 120px; /* Prevent layout shift */
-    }
-
-    .highlight {
-        color: var(--primary);
-        font-weight: 700;
-    }
-
-    .italic {
-        font-style: italic;
-        color: #666;
-        display: block;
-        margin-top: 10px;
-    }
-
-    /* CONTROLS AREA */
-    .controls {
-        display: flex;
-        justify-content: center;
-        gap: 15px;
-        margin-top: 20px;
-    }
-
-    .btn {
-        border: none;
-        padding: 12px 24px;
-        border-radius: 50px;
-        font-family: 'Quicksand', sans-serif;
-        font-weight: 700;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 0.95rem;
-    }
-
-    .btn-primary {
-        background: linear-gradient(135deg, #8e44ad, #9b59b6);
-        color: white;
-        box-shadow: 0 4px 15px rgba(142, 68, 173, 0.4);
-    }
-
-    .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(142, 68, 173, 0.6);
-    }
-
-    .btn-secondary {
-        background: white;
-        color: var(--primary);
-        border: 2px solid var(--primary);
-    }
-
-    .btn-secondary:hover {
-        background: var(--primary);
-        color: white;
-    }
-
-    /* VISUALIZER (FAKE) */
-    .visualizer {
-        display: flex;
-        gap: 4px;
-        height: 20px;
-        align-items: flex-end;
-        margin-left: 10px;
-    }
-
-    .bar {
-        width: 4px;
-        background: white;
-        height: 5px;
-        border-radius: 2px;
-        transition: height 0.1s ease;
-    }
-
-    .playing .bar {
-        animation: equalizer 0.5s ease-in-out infinite alternate;
-    }
-
-    .playing .bar:nth-child(1) { animation-delay: 0.1s; }
-    .playing .bar:nth-child(2) { animation-delay: 0.3s; }
-    .playing .bar:nth-child(3) { animation-delay: 0.0s; }
-    .playing .bar:nth-child(4) { animation-delay: 0.4s; }
-
-    @keyframes equalizer {
-        0% { height: 5px; }
-        100% { height: 20px; }
-    }
-
-    /* ANIMATED ELEMENTS (CONFETTI & HEARTS) */
-    .particle {
-        position: absolute;
-        pointer-events: none;
-        z-index: 5;
-    }
-
-    .confetti {
-        width: 10px;
-        height: 10px;
-        background: #ff9ff3;
-        animation: fall linear forwards;
-    }
-
-    .music-note {
-        font-size: 24px;
-        color: rgba(255, 255, 255, 0.7);
-        animation: floatUp linear forwards;
-    }
-
-    @keyframes fall {
-        to { transform: translateY(110vh) rotate(720deg); }
-    }
-
-    @keyframes floatUp {
-        to { transform: translateY(-100px) rotate(20deg); opacity: 0; }
-    }
-
-    /* TOAST NOTIFICATION */
-    .toast {
-        position: fixed;
-        bottom: 30px;
-        left: 50%;
-        transform: translateX(-50%) translateY(100px);
-        background: rgba(0, 0, 0, 0.8);
-        color: white;
-        padding: 12px 24px;
-        border-radius: 30px;
-        font-size: 0.9rem;
-        opacity: 0;
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        z-index: 200;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-    
-    .toast.show {
-        transform: translateX(-50%) translateY(0);
-        opacity: 1;
-    }
-
-    /* RESPONSIVE */
-    @media (max-width: 600px) {
-        .card {
-            padding: 30px 20px;
-            width: 90%;
-        }
-        .img-wrapper {
-            width: 180px;
-            height: 180px;
-        }
-        h1 { font-size: 1.5rem; }
-        .controls { flex-direction: column; width: 100%; }
-        .btn { justify-content: center; width: 100%; }
-    }
+/* PARTICLES */
+.particle {
+    position: absolute;
+    pointer-events: none;
+    z-index: 5;
+}
+.confetti {
+    width: 10px;
+    height: 10px;
+    animation: fall linear forwards;
+}
+@keyframes fall {
+    to {transform: translateY(110vh) rotate(720deg)}
+}
+.heart {
+    font-size: 22px;
+    animation: fly linear forwards;
+}
+@keyframes fly {
+    to {transform: translateY(-120vh);opacity:0}
+}
 </style>
 </head>
+
 <body>
 
-    <!-- Intro Overlay -->
-    <div id="intro-overlay" onclick="startExperience()">
-        <div class="intro-text">Sebuah Melodi Untukmu</div>
-        <div class="intro-sub">(Ketuk layar untuk membuka)</div>
+<div id="intro-overlay" onclick="startExperience()">
+    <div class="intro-text">Sebuah Melodi Untukmu</div>
+    <div style="opacity:.7;margin-top:10px">(Ketuk layar)</div>
+</div>
+
+<div class="card" id="card">
+    <div class="img-wrapper">
+        <img src="kanade.jpg" onerror="this.src='https://picsum.photos/300'">
     </div>
 
-    <!-- Canvas Background -->
-    <canvas id="bg-canvas" class="bg-canvas"></canvas>
+    <h1>🎂 Selamat Ulang Tahun, Kanade 🎶</h1>
+    <div class="date">10 Februari 2026</div>
 
-    <!-- Main Content -->
-    <div class="card-container" id="cardContainer">
-        <article class="card" id="mainCard">
-            <div class="corner-decoration top-left"></div>
-            <div class="corner-decoration bottom-right"></div>
-
-            <div class="img-wrapper">
-                <!-- Fallback to Picsum if local image missing -->
-                <img src="kanade.jpg" 
-                     onerror="this.src='https://picsum.photos/seed/kanade/300/300'" 
-                     alt="Kanade" 
-                     class="kanade-img">
-            </div>
-
-            <h1>🎂 Selamat Ulang Tahun, Kanade 🎶</h1>
-            
-            <div class="date-badge">10 Februari 2026</div>
-
-            <div class="message-content" id="typewriter">
-                <!-- Text will be injected via JS -->
-            </div>
-
-            <div class="controls">
-                <button class="btn btn-primary" onclick="toggleMusic(this)">
-                    <span>🎵 Putar Musik</span>
-                    <div class="visualizer" id="visualizer">
-                        <div class="bar"></div>
-                        <div class="bar"></div>
-                        <div class="bar"></div>
-                        <div class="bar"></div>
-                    </div>
-                </button>
-                <button class="btn btn-secondary" onclick="celebrate()">
-                    ✨ Rayakan!
-                </button>
-            </div>
-        </article>
+    <div class="message">
+        <b>Selamat ulang tahun, Kanade.</b><br>
+        Semoga setiap nada yang kamu ciptakan selalu membawa ketenangan.
+        <br><br>
+        <i>"Kamu adalah suara yang tidak berteriak, tapi selalu tinggal di hati."</i>
+        <br><br>
+        <b>Teruslah bermusik dan bersinar.</b>
     </div>
 
-    <!-- Toast Notification -->
-    <div class="toast" id="toast">
-        <span id="toast-icon">🎵</span>
-        <span id="toast-msg">Musik diputar...</span>
-    </div>
+    <button class="btn-main" onclick="celebrate()">✨ Rayakan!</button>
+</div>
 
 <script>
-    // --- KONFIGURASI TEKS ---
-    const fullText = `
-        Pada tanggal <b>10 Februari 2026</b>, sebuah melodi lembut kembali dirayakan.
-        <br><br>
-        <b>Selamat ulang tahun, Kanade.</b>
-        <br>
-        Semoga setiap nada yang kamu ciptakan selalu membawa ketenangan dan harapan.
-        <br><br>
-        <i class="italic">"Kamu adalah suara yang tidak berteriak, tapi selalu tinggal di hati."</i>
-        <br><br>
-        <b>Teruslah bermusik dan bersinar.</b> Dunia butuh keindahan yang tenang sepertimu.
-        <br><br>
-        🎼💜✨
-    `;
+const card = document.getElementById("card");
 
-    // --- VARIABLES ---
-    let isPlaying = false;
-    let audioContext = null; // Placeholder for real audio logic if expanded later
+function startExperience() {
+    document.getElementById("intro-overlay").classList.add("hidden");
+    setTimeout(() => card.classList.add("active"), 500);
 
-    // --- INTRO FUNCTION ---
-    function startExperience() {
-        const overlay = document.getElementById('intro-overlay');
-        const card = document.getElementById('mainCard');
-        
-        overlay.classList.add('hidden');
-        
-        // Show card after overlay fades
-        setTimeout(() => {
-            card.classList.add('active');
-            typeWriterEffect(); // Start typing text
-            createBackgroundNotes(); // Start ambient background
-        }, 500);
-    }
+    // ledakan awal
+    for(let i=0;i<30;i++) setTimeout(createConfetti,i*40);
+    for(let i=0;i<10;i++) setTimeout(createHeart,i*80);
+}
 
-    // --- TYPEWRITER EFFECT ---
-    function typeWriterEffect() {
-        const container = document.getElementById('typewriter');
-        container.innerHTML = ''; // Clear
-        let i = 0;
-        const speed = 20; // ms per char
+// AUTO EFFECT
+setInterval(createConfetti, 900);
+setInterval(()=>{ if(Math.random()>0.6) createHeart(); },1500);
 
-        // Temporary div to parse HTML tags
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = fullText.trim();
-        
-        // Simple text node traversal for typewriter is complex with HTML tags.
-        // For simplicity in this demo, we will fade in the whole HTML block 
-        // or just type plain text. Let's do a fade-in for HTML content 
-        // to preserve formatting safely.
-        
-        container.innerHTML = fullText;
-        container.style.opacity = 0;
-        container.style.transition = 'opacity 2s ease';
-        
-        let op = 0;
-        const timer = setInterval(() => {
-            if (op >= 1) clearInterval(timer);
-            container.style.opacity = op;
-            op += 0.05;
-        }, 50);
-    }
+function createConfetti() {
+    const c = document.createElement("div");
+    c.className = "particle confetti";
+    c.style.left = Math.random()*100+"vw";
+    c.style.top = "-10px";
+    c.style.background =
+        ["#ff9ff3","#feca57","#54a0ff","#ffffff"]
+        [Math.floor(Math.random()*4)];
+    c.style.animationDuration = (Math.random()*2+3)+"s";
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),5000);
+}
 
-    // --- MUSIC TOGGLE (VISUAL ONLY) ---
-    function toggleMusic(btn) {
-        isPlaying = !isPlaying;
-        const visualizer = document.getElementById('visualizer');
-        const btnText = btn.querySelector('span');
+function createHeart() {
+    const h = document.createElement("div");
+    h.className = "particle heart";
+    h.innerHTML = "💜";
+    h.style.left = Math.random()*100+"vw";
+    h.style.bottom = "-20px";
+    h.style.animationDuration = (Math.random()*3+4)+"s";
+    document.body.appendChild(h);
+    setTimeout(()=>h.remove(),7000);
+}
 
-        if (isPlaying) {
-            visualizer.classList.add('playing');
-            btnText.textContent = "⏸ Jeda Musik";
-            btn.style.background = "linear-gradient(135deg, #6c3483, #8e44ad)";
-            showToast("🎵 Memutar: 'Sound of Silence' (Cover by Kanade)");
-            spawnNotes(); // Spawn instant notes
-        } else {
-            visualizer.classList.remove('playing');
-            btnText.textContent = "🎵 Putar Musik";
-            btn.style.background = ""; // Reset to default CSS
-        }
-    }
-
-    // --- CELEBRATE BUTTON ---
-    function celebrate() {
-        showToast("🎉 Selamat Ulang Tahun! Semoga bahagia selalu!");
-        
-        // Explosion of confetti
-        for(let i=0; i<50; i++) {
-            setTimeout(() => {
-                createConfetti();
-            }, i * 30);
-        }
-        
-        // Heart burst
-        for(let i=0; i<15; i++) {
-            setTimeout(() => {
-                createHeart();
-            }, i * 50);
-        }
-    }
-
-    // --- TOAST SYSTEM ---
-    function showToast(message) {
-        const toast = document.getElementById('toast');
-        const msgSpan = document.getElementById('toast-msg');
-        
-        msgSpan.textContent = message;
-        toast.classList.add('show');
-        
-        setTimeout(() => {
-            toast.classList.remove('show');
-        }, 3000);
-    }
-
-    // --- PARTICLE SYSTEMS ---
-    function createConfetti() {
-        const confetti = document.createElement('div');
-        confetti.className = 'confetti particle';
-        
-        // Random properties
-        const colors = ['#ff9ff3', '#feca57', '#54a0ff', '#5f27cd', '#ffffff'];
-        confetti.style.left = Math.random() * 100 + 'vw';
-        confetti.style.top = '-10px';
-        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-        confetti.style.animationDuration = (Math.random() * 2 + 3) + 's';
-        
-        document.body.appendChild(confetti);
-        
-        setTimeout(() => confetti.remove(), 5000);
-    }
-
-    function createHeart() {
-        const heart = document.createElement('div');
-        heart.className = 'particle music-note';
-        heart.innerHTML = '💜';
-        heart.style.left = Math.random() * 100 + 'vw';
-        heart.style.bottom = '-20px';
-        heart.style.fontSize = (Math.random() * 20 + 15) + 'px';
-        heart.style.animationDuration = (Math.random() * 3 + 4) + 's';
-        
-        document.body.appendChild(heart);
-        setTimeout(() => heart.remove(), 7000);
-    }
-
-    function spawnNotes() {
-        // Spawn a few notes around the card
-        const cardRect = document.getElementById('mainCard').getBoundingClientRect();
-        for(let i=0; i<5; i++) {
-            const note = document.createElement('div');
-            note.className = 'particle music-note';
-            note.innerHTML = Math.random() > 0.5 ? '🎵' : '🎶';
-            note.style.left = (cardRect.left + Math.random() * cardRect.width) + 'px';
-            note.style.top = (cardRect.top + Math.random() * cardRect.height) + 'px';
-            note.style.fontSize = '20px';
-            document.body.appendChild(note);
-            
-            // Animate manually for more control
-            note.animate([
-                { transform: 'translateY(0) scale(1)', opacity: 1 },
-                { transform: `translateY(-100px) translateX(${Math.random()*40 - 20}px) scale(0)`, opacity: 0 }
-            ], {
-                duration: 1500,
-                easing: 'ease-out'
-            }).onfinish = () => note.remove();
-        }
-    }
-
-    // --- 3D CARD TILT EFFECT ---
-    const container = document.getElementById('cardContainer');
-    const card = document.getElementById('mainCard');
-
-    document.addEventListener('mousemove', (e) => {
-        if(window.innerWidth < 600) return; // Disable on mobile
-
-        const xAxis = (window.innerWidth / 2 - e.pageX) / 25;
-        const yAxis = (window.innerHeight / 2 - e.pageY) / 25;
-        
-        container.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
-    });
-
-    // Reset on mouse leave
-    document.addEventListener('mouseleave', () => {
-        container.style.transform = `rotateY(0deg) rotateX(0deg)`;
-    });
-
-    // --- CANVAS BACKGROUND (STARRY NIGHT) ---
-    const canvas = document.getElementById('bg-canvas');
-    const ctx = canvas.getContext('2d');
-    
-    let width, height;
-    let particles = [];
-
-    function resize() {
-        width = canvas.width = window.innerWidth;
-        height = canvas.height = window.innerHeight;
-    }
-    window.addEventListener('resize', resize);
-    resize();
-
-    class Star {
-        constructor() {
-            this.reset();
-        }
-        reset() {
-            this.x = Math.random() * width;
-            this.y = Math.random() * height;
-            this.size = Math.random() * 2;
-            this.speed = Math.random() * 0.5 + 0.1;
-            this.opacity = Math.random();
-            this.fade = Math.random() * 0.02 + 0.005;
-        }
-        update() {
-            this.y -= this.speed;
-            this.opacity += this.fade;
-            
-            if (this.opacity > 1 || this.opacity < 0) this.fade = -this.fade;
-            
-            if (this.y < 0) this.reset();
-            this.y = this.y < 0 ? height : this.y;
-        }
-        draw() {
-            ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-            ctx.fill();
-        }
-    }
-
-    function createBackgroundNotes() {
-        for(let i=0; i<50; i++) particles.push(new Star());
-        animateBg();
-    }
-
-    function animateBg() {
-        ctx.clearRect(0, 0, width, height);
-        particles.forEach(p => {
-            p.update();
-            p.draw();
-        });
-        requestAnimationFrame(animateBg);
-    }
-
+function celebrate() {
+    for(let i=0;i<40;i++) setTimeout(createConfetti,i*25);
+    for(let i=0;i<15;i++) setTimeout(createHeart,i*60);
+}
 </script>
-</body>
 
+</body>
 </html>
