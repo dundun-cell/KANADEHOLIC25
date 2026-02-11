@@ -362,8 +362,9 @@
             <div class="corner-decoration bottom-right"></div>
 
             <div class="img-wrapper">
-                <!-- Gambar placeholder (bisa diganti 'kanade.jpg') -->
-                <img src="https://picsum.photos/seed/kanade/300/300" 
+                <!-- PERHATIKAN BAGIAN INI: Kembali ke kanade.jpg dengan onerror -->
+                <img src="kanade.jpg" 
+                     onerror="this.src='https://picsum.photos/seed/kanade/300/300'" 
                      alt="Kanade" 
                      class="kanade-img">
             </div>
@@ -453,7 +454,7 @@
         }, 50);
     }
 
-    // --- AUTO EFFECTS SYSTEM (Baru Ditambahkan) ---
+    // --- AUTO EFFECTS SYSTEM ---
     function startAutoEffects() {
         // Buat Confetti Jatuh tiap 300ms
         autoConfettiInterval = setInterval(() => {
